@@ -9,8 +9,8 @@ class AttendanceApp {
         this.status = document.getElementById('status');
         
         this.isScanning = false;
-        this.GOOGLE_SHEET_ID = 'YOUR_GOOGLE_SHEET_ID'; // Ganti dengan ID Google Sheet
-        this.GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL'; // Ganti dengan URL Apps Script
+        this.GOOGLE_SHEET_ID = '1HM9MiGwu5c0t2fFJQtFxd5Mb0W2aez9GzNmEwp1V30s1uccDP0Tg2LDo'; // Ganti dengan ID Google Sheet
+        this.GOOGLE_SCRIPT_URL = 'https://script.google.com/home/projects/1HM9MiGwu5c0t2fFJQtFxd5Mb0W2aez9GzNmEwp1V30s1uccDP0Tg2LDo/edit'; // Ganti dengan URL Apps Script
         
         this.init();
     }
