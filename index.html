@@ -3,151 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Absensi Digital</title>
+    <title>Aplikasi Absensi QRCode</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-    <!-- Login Modal -->
-    <div id="loginModal" class="modal active">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2><i class="fas fa-sign-in-alt"></i> Login Admin</h2>
-            </div>
-            <form id="loginForm">
-                <div class="form-group">
-                    <label>Username</label>
-                    <input type="text" id="loginUsername" required>
-                </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" id="loginPassword" required>
-                </div>
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-login"></i> Login
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Main App -->
-    <div id="mainApp" class="container" style="display: none;">
-        <!-- Header -->
-        <header class="header">
-            <div class="header-left">
-                <h1><i class="fas fa-calendar-check"></i> Sistem Absensi</h1>
-            </div>
-            <div class="header-right">
-                <span id="currentDate"></span>
-                <button id="logoutBtn" class="btn btn-secondary">
-                    <i class="fas fa-sign-out-alt"></i>
-                </button>
-            </div>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-fingerprint"></i> Sistem Absensi QRCode</h1>
+            <div class="status" id="status">Scan QRCode untuk absen</div>
         </header>
 
-        <!-- Navigation -->
-        <nav class="nav-tabs">
-            <button class="nav-tab active" data-tab="absen">
-                <i class="fas fa-camera"></i> Absen
-            </button>
-            <button class="nav-tab" data-tab="admin">
-                <i class="fas fa-user-cog"></i> Admin
-            </button>
-            <button class="nav-tab" data-tab="laporan">
-                <i class="fas fa-file-excel"></i> Laporan
-            </button>
-        </nav>
+        <div class="main-content">
+            <!-- Video Scanner -->
+            <div class="scanner-container" id="scannerContainer">
+                <video id="video" autoplay muted playsinline></video>
+                <canvas id="canvas" style="display: none;"></canvas>
+                <div class="scanner-overlay">
+                    <div class="scan-frame"></div>
+                    <p>Posisikan QRCode di dalam kotak</p>
+                </div>
+            </div>
 
-        <!-- Absen Tab -->
-        <div id="absenTab" class="tab-content active">
-            <div class="absen-container">
-                <div class="absen-card">
-                    <div class="absen-info">
-                        <h3 id="absenTitle">Absen Masuk</h3>
-                        <p id="absenTime"></p>
-                        <p id="absenLocation"></p>
-                    </div>
-                    <div class="selfie-preview" id="selfiePreview">
-                        <i class="fas fa-camera fa-5x"></i>
-                        <p>Klik tombol untuk selfie</p>
-                    </div>
-                    <button id="absenBtn" class="btn btn-primary btn-large">
-                        <i class="fas fa-camera"></i> Ambil Selfie & Absen
+            <!-- Hasil Absensi -->
+            <div class="result-container" id="resultContainer" style="display: none;">
+                <div class="result-success" id="resultSuccess">
+                    <i class="fas fa-check-circle"></i>
+                    <h3 id="absenStatus"></h3>
+                    <p id="absenDetail"></p>
+                    <button onclick="startScanner()" class="btn-scan-again">
+                        <i class="fas fa-camera"></i> Scan Lagi
                     </button>
                 </div>
             </div>
-        </div>
 
-        <!-- Admin Tab -->
-        <div id="adminTab" class="tab-content">
-            <div class="admin-section">
-                <div class="form-section">
-                    <h3><i class="fas fa-user-plus"></i> Daftar Pengguna Baru</h3>
-                    <form id="signupForm">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Nama Lengkap</label>
-                                <input type="text" id="nama" required>
-                            </div>
-                            <div class="form-group">
-                                <label>NIP/NIS</label>
-                                <input type="text" id="nip" required>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Email</label>
-                                <input type="email" id="email" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Departemen</label>
-                                <select id="departemen" required>
-                                    <option value="">Pilih Departemen</option>
-                                    <option value="IT">IT</option>
-                                    <option value="HR">HR</option>
-                                    <option value="Finance">Finance</option>
-                                    <option value="Marketing">Marketing</option>
-                                </select>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-success">
-                            <i class="fas fa-save"></i> Daftar Pengguna
-                        </button>
-                    </form>
-                </div>
-
-                <div class="user-list">
-                    <h3><i class="fas fa-users"></i> Daftar Pengguna</h3>
-                    <div id="userList"></div>
-                </div>
+            <!-- Loading -->
+            <div class="loading" id="loading" style="display: none;">
+                <div class="spinner"></div>
+                <p>Memverifikasi absensi...</p>
             </div>
         </div>
 
-        <!-- Laporan Tab -->
-        <div id="laporanTab" class="tab-content">
-            <div class="filter-section">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Tanggal</label>
-                        <input type="date" id="filterDate">
-                    </div>
-                    <div class="form-group">
-                        <label>Pengguna</label>
-                        <select id="filterUser">
-                            <option value="">Semua Pengguna</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <button id="exportBtn" class="btn btn-success">
-                            <i class="fas fa-download"></i> Export Excel
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div id="laporanTable"></div>
+        <!-- Daftar Absensi Hari Ini -->
+        <div class="attendance-list">
+            <h3><i class="fas fa-list"></i> Absensi Hari Ini</h3>
+            <div id="attendanceList"></div>
         </div>
     </div>
 
+    <!-- Scripts -->
+    <script src="https://unpkg.com/jsqr@1.4.0/dist/jsQR.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
