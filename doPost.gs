@@ -1,6 +1,6 @@
 function doPost(e) {
   try {
-    const sheetId = 'YOUR_GOOGLE_SHEET_ID'; // Ganti dengan ID Google Sheet
+    const sheetId = '1ctQJQdpZ76iawo9Cak5Q8n9jVZvOaVQh2qVTcxVMIKU'; // Ganti dengan ID Google Sheet
     const sheet = SpreadsheetApp.openById(sheetId).getActiveSheet();
     
     const data = JSON.parse(e.postData.contents);
